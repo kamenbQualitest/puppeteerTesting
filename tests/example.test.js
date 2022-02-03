@@ -56,13 +56,25 @@ describe('Interacting with dropdowns and submitting form', () => {
 })
 describe('Get page title and url', () =>{
     it('should be able to get the page title and url', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('http://example.com')
         const title = await page.title()
         const url = await page.url();
         console.log(title)
         console.log(url)
+        await browser.close();
+    })
+})
+describe('Get Element Text', () =>{
+    it('should be able to grab the text within an element', async function() {
+        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const page = await browser.newPage()
+        await page.goto('http://example.com')
+        const title = await page.title()
+        const url = await page.url();
+        const text = await page.$eval('h1', element => element.textContent)
+        console.log('text in the h1' + text)
         await browser.close();
     })
 })
