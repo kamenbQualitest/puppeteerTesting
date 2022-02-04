@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+const expect = require('chai').expect;
+
 //Cody, the commented out bit is the problem area. I will be pushing somehwat regularly as I go through the course i am following so this should be the reference point.
 // describe('My First Puppeteer Test', () => {
 //     it('should launch the browser', async function() {
@@ -17,7 +19,7 @@ const puppeteer = require('puppeteer');
 // })
 describe('Interacting with Inputs', () => {
     it('should interact with user inputs', async function() {
-        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'Mike Wizowski', {delay: 0})
@@ -29,7 +31,7 @@ describe('Interacting with Inputs', () => {
 })
 describe('Interacting with buttons', () => {
     it('should be able to click buttons', async function() {
-        const browser = await puppeteer.launch({headless: true})
+        const browser = await puppeteer.launch({headless: false})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'steve', {delay: 0})
@@ -40,7 +42,7 @@ describe('Interacting with buttons', () => {
 })
 describe('Interacting with dropdowns and submitting form', () => {
     it('should be able to select dropdown menus and submit form', async function() {
-        const browser = await puppeteer.launch({headless: true})
+        const browser = await puppeteer.launch({headless: false, delay: 0})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'steve', {delay: 0})
@@ -56,7 +58,7 @@ describe('Interacting with dropdowns and submitting form', () => {
 })
 describe('Get page title and url', () =>{
     it('should be able to get the page title and url', async function() {
-        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('http://example.com')
         const title = await page.title()
@@ -74,7 +76,32 @@ describe('Get Element Text', () =>{
         const title = await page.title()
         const url = await page.url();
         const text = await page.$eval('h1', element => element.textContent)
-        console.log('text in the h1' + text)
+        console.log('text in the h1: ' + text)
         await browser.close();
+    })
+})
+describe('Get Element Count', () =>{
+    it('should be able to count the number of elements', async function() {
+        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const page = await browser.newPage()
+        await page.goto('http://example.com')
+        const count = await page.$$eval('p', element => element.length)
+        console.log('number of <p> tags on the page: '+count)
+        await browser.close();
+    })
+})
+describe('Assertions', () =>{
+    it('should pass/fail depending on the assertion', async function() {
+        const browser = await puppeteer.launch({headless: false, slowMo: 100})
+        const page = await browser.newPage()
+        const url = await page.url();
+        const title = await page.title();
+        const text = await page.$eval('h1', element => element.textContent)
+        const count = await page.$$eval('p', element => element.length)
+        expect(title).to.be.a('string', 'Example Domain')
+        expect(url).to.include('example.com')
+        expect(text).to.be.a('string', 'Example Domain')
+        expect(count).to.be.equal(2)
+        browser.close()
     })
 })
