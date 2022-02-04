@@ -1,25 +1,9 @@
 const puppeteer = require('puppeteer');
 const expect = require('chai').expect;
 
-//Cody, the commented out bit is the problem area. I will be pushing somehwat regularly as I go through the course i am following so this should be the reference point.
-// describe('My First Puppeteer Test', () => {
-//     it('should launch the browser', async function() {
-//         const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
-//         const page = await browser.newPage()
-//         await page.goto('http://example.com/')
-//         await page.waitForSelector('h1')
-//         await page.goto('https://dev.to/')
-//         await page.waitForSelector('#page-content')
-//         await page.goBack()
-//         await page.waitForSelector('h1')
-//         await page.goForward()
-//         await page.waitForSelector('#page-content')
-//         await browser.close()
-//     })
-// })
 describe('Interacting with Inputs', () => {
     it('should interact with user inputs', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'Mike Wizowski', {delay: 0})
@@ -31,7 +15,7 @@ describe('Interacting with Inputs', () => {
 })
 describe('Interacting with buttons', () => {
     it('should be able to click buttons', async function() {
-        const browser = await puppeteer.launch({headless: false})
+        const browser = await puppeteer.launch({headless: true})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'steve', {delay: 0})
@@ -42,7 +26,7 @@ describe('Interacting with buttons', () => {
 })
 describe('Interacting with dropdowns and submitting form', () => {
     it('should be able to select dropdown menus and submit form', async function() {
-        const browser = await puppeteer.launch({headless: false, delay: 0})
+        const browser = await puppeteer.launch({headless: true, delay: 0})
         const page = await browser.newPage()
         await page.goto('https://devexpress.github.io/testcafe/example/')
         await page.type('#developer-name', 'steve', {delay: 0})
@@ -58,7 +42,7 @@ describe('Interacting with dropdowns and submitting form', () => {
 })
 describe('Get page title and url', () =>{
     it('should be able to get the page title and url', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('http://example.com')
         const title = await page.title()
@@ -70,7 +54,7 @@ describe('Get page title and url', () =>{
 })
 describe('Get Element Text', () =>{
     it('should be able to grab the text within an element', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('http://example.com')
         const title = await page.title()
@@ -82,7 +66,7 @@ describe('Get Element Text', () =>{
 })
 describe('Get Element Count', () =>{
     it('should be able to count the number of elements', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100, devtools: false})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100, devtools: false})
         const page = await browser.newPage()
         await page.goto('http://example.com')
         const count = await page.$$eval('p', element => element.length)
@@ -92,9 +76,10 @@ describe('Get Element Count', () =>{
 })
 describe('Assertions', () =>{
     it('should pass/fail depending on the assertion', async function() {
-        const browser = await puppeteer.launch({headless: false, slowMo: 100})
+        const browser = await puppeteer.launch({headless: true, slowMo: 100})
         const page = await browser.newPage()
-        const url = await page.url();
+        await page.goto('http://example.com')
+        const url = page.url();
         const title = await page.title();
         const text = await page.$eval('h1', element => element.textContent)
         const count = await page.$$eval('p', element => element.length)
@@ -102,6 +87,38 @@ describe('Assertions', () =>{
         expect(url).to.include('example.com')
         expect(text).to.be.a('string', 'Example Domain')
         expect(count).to.be.equal(2)
-        browser.close()
+        await browser.close()
+    })
+})
+describe('simulate a button press', ()=>{
+    it('should be able to simulate a button press', async function() {
+        const browser = await puppeteer.launch({headless: true})
+        const page = await browser.newPage()
+        await page.goto('http://zero.webappsecurity.com/index.html')
+        await page.waitForSelector('#searchTerm')
+        await page.type('#searchTerm', 'Hello World')
+        await page.keyboard.press('Enter', {delay:10})
+        await page.waitForTimeout(5000)
+        await browser.close()
+    })
+})
+describe('Wait for xPath', ()=>{
+    it('should be able to find elements by their x-path', async function() {
+        const browser = await puppeteer.launch({headless: true})
+        const page = await browser.newPage()
+        await page.goto('http://example.com')
+        await page.waitForXPath('//h1')
+        await browser.close();
+
+    })
+    it('should be able to check if an element does not exist', async function() {
+        const browser = await puppeteer.launch({headless: true})
+        const page = await browser.newPage();
+        await page.goto('http://zero.webappsecurity.com/index.html')
+        await page.waitForXPath('//*[@id="signin_button"]')
+        await page.click('#signin_button')
+        await page.waitForXPath('//*[@id="signin_button"]', {hidden: true, timeout: 3000})
+        await browser.close();
+        
     })
 })
